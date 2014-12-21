@@ -6,39 +6,28 @@ import time
 import re
 
 
-class OpenBLFeed(object):
+class VXVault(object):
     def __init__(self):
-        self._feed_base_url = 'https://www.openbl.org/lists/'
+        self._feed_base_url = 'http://vxvault.siri-urz.net/URL_List.php'
 
-        openbltypes = {
-            "SSH": "base_all_ssh-only.txt",
-            "HTTP": "base_all_http-only.txt",
-            "FTP": "base_all_ftp-only.txt",
-            "MAIL": "base_all_mail-only.txt",
-            "SMTP": "base_all_smtp-only.txt"
-        }
         self._http_headers_time = "%a, %d %b %Y %H:%M:%S GMT"
         self._feed_header = {}
         self._feed_entries = []
 
         # will be later used for dumping unlisted entries
-        r = requests.get("{0}{1}".format(self._feed_base_url, "delisted.txt"), stream=True, timeout=5)
+        r = requests.get(self._feed_base_url, stream=True, timeout=5)
         self._feed_header.update(self._get_feed_header(r))
-
-        for k in openbltypes.keys():
-            r = requests.get("{0}{1}".format(self._feed_base_url, openbltypes[k]), stream=True, timeout=5)
-            self._feed_entries.append(self._get_feed_entries(r, k))
+        self._feed_entries.append(self._get_feed_entries(r, 'malware'))
 
     def _get_feed_header(self, resp):
         _dfeeder = {
             'id': hashlib.md5(self._feed_base_url).hexdigest(),
             'title': self._feed_base_url,
-            'description': 'OpenBL Blacklist - OpenBL.org',
+            'description': 'VXVault.net',
             'last_status': resp.status_code,
             'url': self._feed_base_url,
-            'publisher': 'openbl.org'
+            'publisher': 'VXVault.net'
         }
-
         if 'last-modified' in resp.headers:
             _updtime = time.strptime(resp.headers['last-modified'], self._http_headers_time)
             _dfeeder.update({'last_update': _updtime})
@@ -53,9 +42,9 @@ class OpenBLFeed(object):
         else:
             _updtime = time.localtime()
 
-        _res = "IP"
+        _res = "URL"
         for feeditem in resp.iter_lines():
-            if re.search("^\s*#.*", feeditem) is not None:
+            if re.search("^\s*https?://", feeditem) is None:
                 continue
 
             _item = {
@@ -68,18 +57,18 @@ class OpenBLFeed(object):
                 'last_update': _updtime,
                 'asn': '',
                 'country': '',
-                'ip': feeditem.rstrip(),
-                'url': ''
+                'url': feeditem.rstrip(),
+                'ip': ''
             }
-            print "{0}: {1}".format(rtype, _item['ip'])
-            itemid_base = "{0}/{1}".format(_item['source'], _item['ip'])
+            print "{0}: {1}".format(rtype, _item['url'])
+            itemid_base = "{0}/{1}".format(_item['source'], _item['url'])
             _item['id'] = hashlib.md5(itemid_base).hexdigest()
             feed_entries.append(_item)
         return feed_entries
 
 
 def main():
-    mwfeed = OpenBLFeed()
+    mwfeed = VXVault()
 
 if __name__ == "__main__":
     try:

@@ -18,7 +18,7 @@ class MalFeed(object):
     def _get_feed_header(self):
         _dfeeder = {
             'id': hashlib.md5(self._feed_stream.href).hexdigest(),
-            'title': self._feed_stream.feed.title if 'title' in self._feed_stream.feed else '',
+            'title': self._feed_stream.feed.get('title', ''),
             'description': self._feed_stream.feed.subtitle if 'subtitle' in self._feed_stream.feed else '',
             'last_update': self._feed_stream.feed.updated_parsed if 'updated_parsed' in self._feed_stream.feed else time.localtime(),
             'last_status': self._feed_stream.status if 'status' in self._feed_stream else '520',
@@ -67,9 +67,8 @@ class MalFeed(object):
 
             if 'summary_detail' in feeditem:
                 _item['source'] = feeditem.summary_detail.base if 'base' in feeditem.summary_detail else None
-
-            itemid_base = "{0}/{1}".format(_item['source'], _item['url'])
-            _item['id'] = hashlib.md5(itemid_base).hexdigest()
+            itemid_base = _item['source'] + _item['url']
+            _item['id'] = hashlib.md5(itemid_base.encode('utf-8')).hexdigest()
             # dl4.getz.tv
             print "------------------"
             print feeditem

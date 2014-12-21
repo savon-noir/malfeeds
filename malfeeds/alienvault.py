@@ -6,37 +6,27 @@ import time
 import re
 
 
-class OpenBLFeed(object):
+class AlienVaultFeed(object):
     def __init__(self):
-        self._feed_base_url = 'https://www.openbl.org/lists/'
+        self._feed_base_url = 'http://reputation.alienvault.com/reputation.data'
 
-        openbltypes = {
-            "SSH": "base_all_ssh-only.txt",
-            "HTTP": "base_all_http-only.txt",
-            "FTP": "base_all_ftp-only.txt",
-            "MAIL": "base_all_mail-only.txt",
-            "SMTP": "base_all_smtp-only.txt"
-        }
         self._http_headers_time = "%a, %d %b %Y %H:%M:%S GMT"
         self._feed_header = {}
         self._feed_entries = []
 
         # will be later used for dumping unlisted entries
-        r = requests.get("{0}{1}".format(self._feed_base_url, "delisted.txt"), stream=True, timeout=5)
+        r = requests.get(self._feed_base_url, stream=True, timeout=5)
         self._feed_header.update(self._get_feed_header(r))
-
-        for k in openbltypes.keys():
-            r = requests.get("{0}{1}".format(self._feed_base_url, openbltypes[k]), stream=True, timeout=5)
-            self._feed_entries.append(self._get_feed_entries(r, k))
+        self._feed_entries.append(self._get_feed_entries(r, k))
 
     def _get_feed_header(self, resp):
         _dfeeder = {
             'id': hashlib.md5(self._feed_base_url).hexdigest(),
             'title': self._feed_base_url,
-            'description': 'OpenBL Blacklist - OpenBL.org',
+            'description': 'AlientVault Reputation list - alienvault.com',
             'last_status': resp.status_code,
             'url': self._feed_base_url,
-            'publisher': 'openbl.org'
+            'publisher': 'alienvault.com'
         }
 
         if 'last-modified' in resp.headers:
@@ -57,6 +47,20 @@ class OpenBLFeed(object):
         for feeditem in resp.iter_lines():
             if re.search("^\s*#.*", feeditem) is not None:
                 continue
+
+#In [124]: regexp = re.compile('((?:[0-9]{1,3}\.){3}[0-9]{1,3})#[0-9]#[0-9]#([^#]*)#((?:[^#]){0,2})#([^#]*)#([^#]*)')
+#In [125]: b = regexp.search(a)
+#In [126]: b.group(1)
+#Out[126]: '112.125.32.145'
+#In [127]: b.group(2)
+#Out[127]: 'Scanning Host'
+#In [128]: b.group(3)
+#Out[128]: 'CN'
+#In [129]: b.group(4)
+#Out[129]: 'Beijing'
+#In [130]: b.group(5)
+#Out[130]: '39.9289016724,116.388298035'
+#In [131]: b.group(6)
 
             _item = {
                 'id': '',
