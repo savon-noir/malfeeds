@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
-class MalItem(object):
+
+class MalFeedEntry(object):
     def __init__(self, malitemdict):
         self._itemdict = malitemdict
