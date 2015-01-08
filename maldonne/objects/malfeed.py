@@ -2,7 +2,7 @@
 
 
 class MalFeed(object):
-    def __init__(self, malfeedconfig):
+    def __init__(self, malengine, malfeedconfig):
         self.name = malfeedconfig.get('name', None)
         self.engine = malfeedconfig.get('engine', None)
         self.feedurl = malfeedconfig.get('feedurl', None)
@@ -20,3 +20,14 @@ class MalFeed(object):
         if None in [self.name, self.engine, self.feedurl]:
             raise Exception("Error: failed to instanciate MalFeed class. "
                             "Verify required parameters in .ini file")
+
+        self._engine = malengine
+
+    def update(self):
+        self._engine.update()
+
+    def header(self):
+        return self._engine.feed_header
+
+    def entries(self):
+        return self._engine.feed_entries

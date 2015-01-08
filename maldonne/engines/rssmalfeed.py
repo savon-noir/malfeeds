@@ -7,17 +7,26 @@ import re
 
 
 class MalRssFeed(object):
-    def __init__(self, feedname, config):
+    def __init__(self, config):
         self._feed_url = config.get('feedurl', None)
+        self._feed_name = config.get('name', None)
         self._feed_header = {}
         self._feed_entries = []
-        self._feed_name = feedname
-        self._config = config
+        self._feed_config = config
 
+    def update(self):
         if self._feed_url is not None:
             self._feed_stream = feedparser.parse(self._feed_url)
             self._feed_header.update(self._get_feed_header())
             self._feed_entries = self._get_feed_entries()
+
+    @property
+    def feed_header(self):
+        return self._feed_header
+
+    @property
+    def feed_entries(self):
+        return self._feed_entries
 
     def _get_feed_header(self):
         _pkeys = {'title': '',
@@ -27,8 +36,8 @@ class MalRssFeed(object):
                   }
 
         for k in _pkeys.keys():
-            if k in self._config:
-                _pkeys[k] = self._config.get(k, None)
+            if k in self._feed_config:
+                _pkeys[k] = self._feed_config.get(k, None)
             else:
                 _pkeys[k] = self._feed_stream.feed.get(k, '')
 
@@ -54,17 +63,17 @@ class MalRssFeed(object):
                 'id': '',
                 # TODO: derivate domain from URL
                 'domain': feeditem.link.split('=').pop(),
-                'type': self._config.get('type', None),
+                'type': self._feed_config.get('type', None),
                 'publisher': self._feed_name,
                 'last_update': self._feed_stream.feed.get('updated_parsed',
-                                                          self. time.localtime()),
+                                                          time.localtime()),
                 'asn': '',
                 'country': '',
                 'ip': '',
                 'url': ''
             }
 
-            if self._config.getint('use_geoip') == 0:
+            if int(self._feed_config.get('use_geoip', 0)) == 0:
                 _matched = re.search("ASN: ([^,]*),", feeditem.description)
                 if _matched is not None:
                     _item['asn'] = _matched.group(1)
@@ -75,9 +84,11 @@ class MalRssFeed(object):
             else:
                 print "USE GEOIP"
 
-            if self._config.getint('use_dns') == 0:
+            if int(self._feed_config.get('use_dns', 0)) == 0:
                 _ipmatch = re.search("IP [aA]ddress: ([^,]*),", feeditem.description).group(1)
                 _parsed_ip = re.search("([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})", _ipmatch).group(1)
+            else:
+                _parsed_ip = '127.0.0.1'
 
             _matched = re.search("(?:Host|URL): ([^,]*),", feeditem.description)
             if _matched is not None:
