@@ -6,8 +6,8 @@ import time
 import re
 
 
-class VXVault(object):
-    def __init__(self):
+class MalURLList(object):
+    def __init__(self, url):
         self._feed_base_url = 'http://vxvault.siri-urz.net/URL_List.php'
 
         self._http_headers_time = "%a, %d %b %Y %H:%M:%S GMT"
