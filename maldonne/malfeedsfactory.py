@@ -19,6 +19,7 @@ class MalFeedsFactory(object):
             base_dir = os.path.dirname(os.path.realpath(__file__))
 
         feedslist = glob.glob("{0}/feeds/*.ini".format(base_dir))
+        print feedslist
 
         try:
             feedsconfig = ConfigParser.ConfigParser()
@@ -36,7 +37,7 @@ class MalFeedsFactory(object):
 
     def load_engine(self, feedconfig):
         engineobj = None
-        engine_name = feedconfig.get('engine', 'rssmal')
+        engine_name = feedconfig.get('engine', 'rssmalfeed')
         engine_path = "maldonne.engines.{0}".format(engine_name)
         __import__(engine_path)
         engine_module = sys.modules[engine_path]

@@ -33,7 +33,7 @@ class MalRssFeed(object):
                   'description': '',
                   'publisher': '',
                   'rights': ''
-                  }
+        }
 
         for k in _pkeys.keys():
             if k in self._feed_config:
@@ -45,13 +45,13 @@ class MalRssFeed(object):
             'id': hashlib.md5(self._feed_stream.href).hexdigest(),
             'title': _pkeys['title'],
             'description': _pkeys['description'],
-            'rights': _pkeys['rights'],
             'create_date': time.localtime(),
             'last_update': self._feed_stream.feed.get('updated_parsed',
                                                       time.localtime()),
             'status': self._feed_stream.get('status', '520'),
             'feedurl': self._feed_stream.href,
-            'publisher': self._feed_name
+            'publisher': _pkeys['publisher'],
+            'rights': _pkeys['rights']
         }
         return _dfeeder
 
@@ -64,11 +64,13 @@ class MalRssFeed(object):
                 # TODO: derivate domain from URL
                 'domain': feeditem.link.split('=').pop(),
                 'type': self._feed_config.get('type', None),
-                'publisher': self._feed_name,
+                'tags': self._feed_config.get('tags', []),
+                'feedname': self._feed_name,
                 'last_update': self._feed_stream.feed.get('updated_parsed',
                                                           time.localtime()),
                 'asn': '',
                 'country': '',
+                'coordinates': '',
                 'ip': '',
                 'url': ''
             }
@@ -102,7 +104,7 @@ class MalRssFeed(object):
             else:
                 raise Exception("NO HOST OR URL ENTRY")
 
-            itemid_base = _item['publisher'] + _item['url']
+            itemid_base = _item['feedname'] + _item['url']
             _item['id'] = hashlib.md5(itemid_base.encode('utf-8')).hexdigest()
             feed_entries.append(_item)
         return feed_entries
