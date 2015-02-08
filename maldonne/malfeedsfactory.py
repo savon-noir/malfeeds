@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 
 from maldonne.objects import MalFeedsCollection, MalFeed
-import inspect
 import ConfigParser
 import glob
 import os
-import sys
 
 
 class MalFeedsFactory(object):
@@ -35,29 +33,12 @@ class MalFeedsFactory(object):
 
         return feedsconfig
 
-    def load_engine(self, feedconfig):
-        engineobj = None
-        engine_name = feedconfig.get('engine', 'rssmalfeed')
-        engine_path = "maldonne.engines.{0}".format(engine_name)
-        __import__(engine_path)
-        engine_module = sys.modules[engine_path]
-        engine_classes = inspect.getmembers(engine_module, inspect.isclass)
-
-        classname, classproxy = engine_classes.pop()
-        if inspect.getmodule(classproxy).__name__.find(engine_path) == 0:
-            try:
-                engineobj = classproxy(feedconfig)
-            except Exception as error:
-                raise Exception("Cannot create engine, unexpected engine name: {0}".format(error))
-        return engineobj
-
     def get_feeds(self):
         mfcollection = MalFeedsCollection()
 
         for section in self.feedsconfig.sections():
             mfsection = dict(self.feedsconfig.items(section))
-            mfengine = self.load_engine(mfsection)
-            mfcollection.add(MalFeed(mfengine, mfsection))
+            mfcollection.add(MalFeed(mfsection))
 
         return mfcollection
 

@@ -1,16 +1,11 @@
-http://feeds.dshield.org/block.txt
-    http://www.dshield.org/feeds/suspiciousdomains_High.txt
-    http://www.dshield.org/feeds/suspiciousdomains_Medium.txt
-    http://www.dshield.org/feeds/suspiciousdomains_Low.txt
-
 http://www.stopforumspam.com/downloads/
 https://check.torproject.org/exit-addresses
-http://malwared.malwaremustdie.org/rss.php
-http://mirror1.malwaredomains.com/files/domains.txt
 http://malwareurls.joxeankoret.com/normal.txt
 
 
-
+remove all logic from engines
+    - ID calculation should go in feed objects classes
+    - add use dns and geoip logic in feed obj classes
 
 Last update could be from headers in rss feed engine
 Use Stixx http://stixproject.github.io/documentation/idioms/malicious-url/
@@ -22,13 +17,8 @@ Define other types
     - domain
 
 Create channels per feed
-    - enable
-    - engine to use
     - add limit per day 
     - add apikey
-    - use dns
-    - use geoip
-    - tags
     - threat_ratio
 
 add item field
