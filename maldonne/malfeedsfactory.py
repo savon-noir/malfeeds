@@ -4,6 +4,7 @@ from maldonne.objects import MalFeedsCollection, MalFeed
 import ConfigParser
 import glob
 import os
+import sys
 
 
 class MalFeedsFactory(object):
@@ -33,7 +34,7 @@ class MalFeedsFactory(object):
 
         return feedsconfig
 
-    def get_feeds(self):
+    def create_collection(self):
         mfcollection = MalFeedsCollection()
 
         for section in self.feedsconfig.sections():
@@ -45,15 +46,12 @@ class MalFeedsFactory(object):
 
 def main():
     feedsfactory = MalFeedsFactory()
-    for malfeed in feedsfactory.get_feeds():
-        print malfeed.name
+    mfcollection = feedsfactory.create_collection()
+    for malfeed in mfcollection.list():
         malfeed.update()
-        print malfeed.header()
-        print "============================"
-        for me in malfeed.entries():
-            print me.__dict__
-            print "----------------------------------"
-        print "============================"
+#        manipulate the objects (not like below)
+#        print malfeed.header()
+#        print malfeed.entries()
 
 
 if __name__ == "__main__":

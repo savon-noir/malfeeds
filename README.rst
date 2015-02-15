@@ -75,8 +75,13 @@ How to run it
 A very light MalFeedCollection factory is coded in module malfeedsfactory.py. It simply creates a MalFeedsCollection object containing all the enabled MalFeeds.
 
 
-
 Code Status
 -----------
 
 Still under "heavy" dev, help/pull requests/comments welcome.
+
+Please note:
+
+- Only the basis is there so far
+- API is far from complete
+- No output plugins exists yet

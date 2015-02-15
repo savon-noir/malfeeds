@@ -7,7 +7,7 @@ with open("README.rst") as rfile:
 
 setup(
     name='maldonne',
-    version='0.6.2',
+    version='0.1',
     author='Ronald Bister',
     author_email='mini.pelle@gmail.com',
     packages=['maldonne', 'maldonne.engines', 'maldonne.objects'],

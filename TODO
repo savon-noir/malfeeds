@@ -4,6 +4,8 @@ http://www.nothink.org/blacklist/blacklist_malware_dns.txt
 
 
 BUG: incorporate feeditem.title for malware must die (botnet name)
+
+0) create stable API for objects
 1) regexp based on type of entry
 2) CVS engine
 3) add support for stix (import/export)
