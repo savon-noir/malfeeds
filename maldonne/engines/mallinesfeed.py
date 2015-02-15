@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import hashlib
 import requests
 import time
 import re
@@ -19,6 +18,14 @@ class MalLinesFeed(object):
             self._feed_stream = requests.get(self._feed_url, stream=True, timeout=120)
             self._update_header()
             self._update_entries()
+
+    @property
+    def feed_header(self):
+        return self._feed_header
+
+    @property
+    def feed_entries(self):
+        return self._feed_entries
 
     def _update_header(self):
         rval = True
@@ -39,6 +46,7 @@ class MalLinesFeed(object):
 
     def _update_entries(self):
         rval = True
+        known_garbage_list = ["Site", "[Adblock]", "<pre>"]
         if 'last-modified' in self._feed_stream.headers:
             _updtime = time.strptime(self._feed_stream.headers['last-modified'],
                                      self._http_headers_time)
@@ -46,10 +54,9 @@ class MalLinesFeed(object):
             _updtime = time.localtime()
 
         for feeditem in self._feed_stream.iter_lines():
-            if re.search("^\s*#.*", feeditem) is not None:
+            if re.search("^(\s*#.*|\s*$)", feeditem) is not None:
                 continue
             _item = {
-                'id': '',
                 'domain': '',
                 'last_update': _updtime,
                 'asn': '',
@@ -61,13 +68,11 @@ class MalLinesFeed(object):
 
             if self._feed_entry_type is not None:
                 umatch = re.search("^\s*([^\s*]*)\s*$", feeditem)
-                if umatch is None:
+                if umatch is None or umatch.group(1) in known_garbage_list:
                     continue
                 else:
                     _item.update({self._feed_entry_type: umatch.group(1)})
             else:
                 print("warning: no feed type specified. Ignoring entries")
-            itemid_base = "{0}/{1}".format(self._feed_url, _item[self._feed_entry_type])
-            _item['id'] = hashlib.md5(itemid_base).hexdigest()
             self._feed_entries.append(_item)
         return rval

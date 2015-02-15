@@ -1,11 +1,17 @@
 http://www.stopforumspam.com/downloads/
 https://check.torproject.org/exit-addresses
-http://malwareurls.joxeankoret.com/normal.txt
+http://www.nothink.org/blacklist/blacklist_malware_dns.txt
+
+
+BUG: incorporate feeditem.title for malware must die (botnet name)
+1) regexp based on type of entry
+2) CVS engine
+3) add support for stix (import/export)
+4) integrate hpfeeds data
 
 
 remove all logic from engines
-    - ID calculation should go in feed objects classes
-    - add use dns and geoip logic in feed obj classes
+    - add use dns and geoip logic in feed obj classes converted into method and removed from config files
 
 Last update could be from headers in rss feed engine
 Use Stixx http://stixproject.github.io/documentation/idioms/malicious-url/
@@ -20,6 +26,7 @@ Create channels per feed
     - add limit per day 
     - add apikey
     - threat_ratio
+    - add validity period
 
 add item field
     - publish_date

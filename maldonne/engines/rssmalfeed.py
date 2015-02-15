@@ -1,9 +1,5 @@
-#!/usr/bin/env python
-
-import hashlib
 import feedparser
 import time
-import re
 
 
 class MalRssFeed(object):
@@ -18,6 +14,14 @@ class MalRssFeed(object):
             self._feed_stream = feedparser.parse(self._feed_url)
             self._update_header()
             self._update_entries()
+
+    @property
+    def feed_header(self):
+        return self._feed_header
+
+    @property
+    def feed_entries(self):
+        return self._feed_entries
 
     def _update_header(self):
         rval = True
@@ -38,8 +42,7 @@ class MalRssFeed(object):
         rval = True
         for feeditem in self._feed_stream.entries:
             _item = {
-                'id': '',
-                'description': self._feed_stream.feed.get('title', ''),
+                'description': feeditem.get('description', ''),
                 'domain': '',
                 'create_date': time.localtime(),
                 'last_update': self._feed_stream.feed.get('updated_parsed',
@@ -53,8 +56,5 @@ class MalRssFeed(object):
 
             if self._feed_entry_type is not None:
                 _item.update({self._feed_entry_type: feeditem.link})
-
-            itemid_base = self._feed_stream.feed.get('link')
-            _item['id'] = hashlib.md5(itemid_base.encode('utf-8')).hexdigest()
             self._feed_entries.append(_item)
         return rval

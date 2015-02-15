@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import hashlib
 import requests
 import time
 import re
@@ -20,6 +19,14 @@ class AlienVaultFeed(object):
             self._feed_stream = requests.get(self._feed_url, stream=True, timeout=120)
             self._update_header()
             self._update_entries()
+
+    @property
+    def feed_header(self):
+        return self._feed_header
+
+    @property
+    def feed_entries(self):
+        return self._feed_entries
 
     def _update_header(self):
         rval = True
@@ -57,17 +64,14 @@ class AlienVaultFeed(object):
                 _coordinates = regres.group(5)
 
             _item = {
-                'id': '',
-                'description': 
-                'domain': _ip,
+                'description': '',
+                'domain': '',
                 'last_update': _updtime,
                 'asn': '',
                 'country': _country,
                 'coordinates': _coordinates,
                 'ip': _ip,
-                'url': 'http://{0}/'.format(_ip)
+                'url': ''
             }
-            itemid_base = "{0}/{1}".format(self._feed_url, _item[self._feed_entry_type])
-            _item['id'] = hashlib.md5(itemid_base).hexdigest()
             self._feed_entries.append(_item)
         return rval

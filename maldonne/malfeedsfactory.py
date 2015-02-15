@@ -49,7 +49,11 @@ def main():
         print malfeed.name
         malfeed.update()
         print malfeed.header()
-        print "-----------------------------"
+        print "============================"
+        for me in malfeed.entries():
+            print me.__dict__
+            print "----------------------------------"
+        print "============================"
 
 
 if __name__ == "__main__":

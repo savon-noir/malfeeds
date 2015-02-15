@@ -3,15 +3,16 @@
 import hashlib
 import inspect
 import sys
+from maldonne.objects.malfeedentry import MalFeedEntry
 
 
 class MalFeed(object):
     def __init__(self, malfeedconfig):
         self.name = malfeedconfig.get('name', None)
-        self.title = malfeedconfig.get('title', self.name)
-        self.description = malfeedconfig.get('description', self.name)
-        self.publisher = malfeedconfig.get('publisher', self.name)
-        self.rights = malfeedconfig.get('rights', self.name)
+        self.title = malfeedconfig.get('title', '')
+        self.description = malfeedconfig.get('description', '')
+        self.publisher = malfeedconfig.get('publisher', '')
+        self.rights = malfeedconfig.get('rights', '')
 
         self.engine_name = malfeedconfig.get('engine', None)
         self.feedurl = malfeedconfig.get('feedurl', None)
@@ -19,6 +20,7 @@ class MalFeed(object):
         self.type = malfeedconfig.get('type', None)
         self.use_dns = malfeedconfig.get('use_dns', 0)
         self.use_geoip = malfeedconfig.get('use_geoip', 0)
+        self.extended = malfeedconfig.get('extended', 0)
 
         self.create_date = None
         self.last_update = None
@@ -29,9 +31,9 @@ class MalFeed(object):
         self.synced = 0
         self.uptodate = 0
 
-        self.items = []
+        self._entries = []
 
-        if None in [self.name, self.engine, self.feedurl]:
+        if None in [self.name, self.engine_name, self.feedurl]:
             raise Exception("Error: failed to instanciate MalFeed class. "
                             "Verify required parameters in .ini file")
 
@@ -44,14 +46,27 @@ class MalFeed(object):
 
     def _update_header(self):
         fh = self._engine.feed_header
+        for hk in fh.keys():
+            oattr = getattr(self, hk)
+            if oattr is None or len(oattr) == 0:
+                setattr(self, hk, fh[hk])
 
-        self.__dict__.update(self._engine.feed_header)
+    def _update_entries(self):
+        self._entries = []
+        for eentry in self._engine.feed_entries:
+            eentry.update({'tags': self.tags,
+                           'feedurl': self.feedurl,
+                           'type': self.type})
+            self._entries.append(MalFeedEntry(eentry, self.extended))
 
     def header(self):
-        return self.__dict__
+        rh = dict(self.__dict__)
+        del rh['_entries']
+        del rh['_engine']
+        return rh
 
     def entries(self):
-        return self._engine.feed_entries
+        return self._entries
 
     def _load_engine(self, engine_name):
         engineobj = None
@@ -67,3 +82,6 @@ class MalFeed(object):
             except Exception as error:
                 raise Exception("Cannot create engine, unexpected engine name: {0}".format(error))
         return engineobj
+
+    def __str__(self):
+        return str(self.__dict__)
