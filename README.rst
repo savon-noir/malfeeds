@@ -55,25 +55,25 @@ Feeds are .ini files containing the configuration of the different feeds to enab
 
 This ini files **must** contain the following attributes:
 
-**engine**: this is where you define the name of the engine to be used to collect the data
-**feedurl**: URL or URI where to collect data
-**type**: Data type, only the following types are supported so far: ip, domain, url, asn, country, coordinates
-**enabled**: set to 1 or 0 to enable or disable feed
+- **engine**: this is where you define the name of the engine to be used to collect the data
+- **feedurl**: URL or URI where to collect data
+- **type**: Data type, only the following types are supported so far: ip, domain, url, asn, country, coordinates
+- **enabled**: set to 1 or 0 to enable or disable feed
 
 Addtiionally, the following attributes **could** be specified in the feed configuration file:
 
-**title**: title for the feed
-**description**: description for the feed
-**publisher**: publisher/creator of the feed
-**rights**: licensing and authorization specific field, as specified by the feed creator
-**extended**: specific for rss feeds having additional data specified in rssfeed.description field (see malwaredomainlist and malc0de). Set to 1 or 0.
+- **title**: title for the feed
+- **description**: description for the feed
+- **publisher**: publisher/creator of the feed
+- **rights**: licensing and authorization specific field, as specified by the feed creator
+- **extended**: specific for rss feeds having additional data specified in rssfeed.description field (see malwaredomainlist and malc0de). Set to 1 or 0.
 
 
 How to run it
 -------------
 
 A very light MalFeedCollection factory is coded in module malfeedsfactory.py. It simply creates a MalFeedsCollection object containing all the enabled MalFeeds.
-
+Have a look at it.
 
 Code Status
 -----------
