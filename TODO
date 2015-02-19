@@ -1,6 +1,23 @@
-http://www.stopforumspam.com/downloads/
-https://check.torproject.org/exit-addresses
-http://www.nothink.org/blacklist/blacklist_malware_dns.txt
+Add support for following feeds
+    multilines
+        https://check.torproject.org/exit-addresses
+    txt
+        http://www.nothink.org/blacklist/blacklist_malware_dns.txt
+        http://www.nothink.org/blacklist/blacklist_malware_http.txt
+        http://www.nothink.org/blacklist/blacklist_malware_irc.txt
+        http://www.nothink.org/blacklist/blacklist_ssh_day.txt
+        https://feodotracker.abuse.ch/blocklist/
+    csv
+        http://www.autoshun.org/files/shunlist.csv
+        http://www.stopforumspam.com/downloads/
+        https://www.dshield.org/feeds/topips.txt
+    xml
+        http://support.clean-mx.de/clean-mx/xmlviruses.php?
+        http://malwaredb.malekal.com/export.php?type=url
+    http
+        http://www.malwaregroup.com/domains
+    rss
+        http://cybercrime-tracker.net/rss.xml or http://cybercrime-tracker.net/all.php
 
 
 BUG: incorporate feeditem.title for malware must die (botnet name)
@@ -28,6 +45,7 @@ Create channels per feed
     - add limit per day 
     - add apikey
     - threat_ratio
+    - trust rating/confidence level
     - add validity period
 
 add item field
