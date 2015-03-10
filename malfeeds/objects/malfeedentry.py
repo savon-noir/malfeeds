@@ -28,7 +28,6 @@ class MalFeedEntry(object):
         itemid_base = "{0}={1}".format(self.feedurl.encode('utf-8'), getattr(self, self.type).encode('utf-8'))
         self.id = hashlib.md5(itemid_base).hexdigest()
 
-
     def extended_attributes(self, iocdata):
         extattr_dict = {}
         mdict = {
@@ -51,3 +50,7 @@ class MalFeedEntry(object):
             extattr_dict['url'] = "http://{0}/".format(extattr_dict['ip'])
 
         return extattr_dict
+
+    def __repr__(self):
+        return str(self.__dict__)
+

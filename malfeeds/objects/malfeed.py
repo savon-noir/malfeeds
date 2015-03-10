@@ -3,7 +3,7 @@
 import hashlib
 import inspect
 import sys
-from maldonne.objects.malfeedentry import MalFeedEntry
+from malfeeds.objects.malfeedentry import MalFeedEntry
 
 
 class MalFeed(object):
@@ -18,9 +18,9 @@ class MalFeed(object):
         self.feedurl = malfeedconfig.get('feedurl', None)
         self.tags = malfeedconfig.get('tags', '').split(',')
         self.type = malfeedconfig.get('type', None)
-        self.use_dns = malfeedconfig.get('use_dns', 0)
-        self.use_geoip = malfeedconfig.get('use_geoip', 0)
-        self.extended = malfeedconfig.get('extended', 0)
+        self.use_dns = int(malfeedconfig.get('use_dns', 0))
+        self.use_geoip = int(malfeedconfig.get('use_geoip', 0))
+        self.extended = int(malfeedconfig.get('extended', 0))
 
         self.create_date = None
         self.last_update = None
@@ -30,6 +30,7 @@ class MalFeed(object):
 
         self.synced = 0
         self.uptodate = 0
+        self.enabled = int(malfeedconfig.get('enabled', 0))
 
         self._entries = []
 
@@ -70,7 +71,7 @@ class MalFeed(object):
 
     def _load_engine(self, engine_name):
         engineobj = None
-        engine_path = "maldonne.engines.{0}".format(engine_name)
+        engine_path = "malfeeds.engines.{0}".format(engine_name)
         __import__(engine_path)
         engine_module = sys.modules[engine_path]
         engine_classes = inspect.getmembers(engine_module, inspect.isclass)

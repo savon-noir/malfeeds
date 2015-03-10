@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from maldonne.objects import MalFeedsCollection, MalFeed
+from malfeeds.objects import MalFeedsCollection, MalFeed
 import ConfigParser
 import glob
 import os
@@ -8,18 +8,26 @@ import sys
 
 
 class MalFeedsFactory(object):
-    def __init__(self, confdir=None):
-        self.feedsconfig = self.load_configs()
+    def __init__(self, confdir=None, enabled_feeds=False):
+        self.feedsconfig = self.load_configs(confdir, enabled_feeds)
 
-    def load_configs(self, confdir=None):
+    def load_config(self, conffile=None, enabled_feeds=False):
+        feedsconfig = None
+        if conffile is not None:
+            feedsconfig = self._config_parser([conffile], enabled_feeds)
+        return feedsconfig
+
+    def load_configs(self, confdir=None, enabled_feeds=False):
         if confdir is not None:
             base_dir = confdir
         else:
-            base_dir = os.path.dirname(os.path.realpath(__file__))
+            base_dir = os.path.dirname(os.path.realpath(__file__)) + '/feeds/'
+        feedslist = glob.glob("{0}/*.ini".format(base_dir))
 
-        feedslist = glob.glob("{0}/feeds/*.ini".format(base_dir))
-        print feedslist
+        feedsconfig = self._config_parser(feedslist, enabled_feeds)
+        return feedsconfig
 
+    def _config_parser(self, feedslist, enabled_feeds=False):
         try:
             feedsconfig = ConfigParser.ConfigParser()
             feedsconfig.read(feedslist)
@@ -27,7 +35,7 @@ class MalFeedsFactory(object):
             print("error while parsing feeds: {0}".format(e))
 
         for section in feedsconfig.sections():
-            if feedsconfig.getint(section, "enabled") == 0:
+            if enabled_feeds is True and feedsconfig.getint(section, "enabled") == 0:
                 feedsconfig.remove_section(section)
             else:
                 feedsconfig.set(section, "name", section)
@@ -48,10 +56,14 @@ def main():
     feedsfactory = MalFeedsFactory()
     mfcollection = feedsfactory.create_collection()
     for malfeed in mfcollection.list():
-        malfeed.update()
+        if malfeed.enabled:
+            print malfeed.name
+            malfeed.update()
 #        manipulate the objects (not like below)
 #        print malfeed.header()
-#        print malfeed.entries()
+            for mentry in malfeed.entries():
+                print mentry
+            print "---------------------"
 
 
 if __name__ == "__main__":

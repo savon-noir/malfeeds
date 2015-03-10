@@ -6,12 +6,12 @@ with open("README.rst") as rfile:
     long_description = rfile.read()
 
 setup(
-    name='maldonne',
+    name='malfeeds',
     version='0.1',
     author='Ronald Bister',
     author_email='mini.pelle@gmail.com',
-    packages=['maldonne', 'maldonne.engines', 'maldonne.objects'],
+    packages=['malfeeds', 'malfeeds.engines', 'malfeeds.objects'],
     license='Creative Common "Attribution" license (CC-BY) v3',
-    description=('Malware feeds librairy'),
+    description=('Malware feeds library'),
     long_description=long_description,
 )

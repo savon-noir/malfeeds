@@ -68,6 +68,13 @@ Addtiionally, the following attributes **could** be specified in the feed config
 - **rights**: licensing and authorization specific field, as specified by the feed creator
 - **extended**: specific for rss feeds having additional data specified in rssfeed.description field (see malwaredomainlist and malc0de). Set to 1 or 0.
 
+Dependencies
+-------------
+
+Following packages need to be installed:
+
+- feedparser
+- idstools
 
 How to run it
 -------------

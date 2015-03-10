@@ -1,3 +1,9 @@
+
+optimize:
+    - engine mallinesfeed: manage lines with inline comments (improve regexp)
+    - add entry fields: type (ip, domain, ...), align with snort, add description
+    - create lib file (see function in snort engine)
+
 Add support for following feeds
     multilines
         https://check.torproject.org/exit-addresses
@@ -7,10 +13,16 @@ Add support for following feeds
         http://www.nothink.org/blacklist/blacklist_malware_irc.txt
         http://www.nothink.org/blacklist/blacklist_ssh_day.txt
         https://feodotracker.abuse.ch/blocklist/
+        http://www.infiltrated.net/blacklisted
+        http://danger.rulez.sk/projects/bruteforceblocker/blist.php <---
+        http://openphish.com/feed.txt
+        http://www.spamhaus.org/drop/edrop.txt <-- optimize comment type
+        http://www.spamhaus.org/drop/drop.lasso
     csv
         http://www.autoshun.org/files/shunlist.csv
         http://www.stopforumspam.com/downloads/
         https://www.dshield.org/feeds/topips.txt
+
     xml
         http://support.clean-mx.de/clean-mx/xmlviruses.php?
         http://malwaredb.malekal.com/export.php?type=url
@@ -18,6 +30,7 @@ Add support for following feeds
         http://www.malwaregroup.com/domains
     rss
         http://cybercrime-tracker.net/rss.xml or http://cybercrime-tracker.net/all.php
+        http://www.threatexpert.com/latest_threat_reports.aspx
 
 
 BUG: incorporate feeditem.title for malware must die (botnet name)
@@ -40,12 +53,21 @@ Define other types
     - url
     - email
     - domain
+    - subnet
+
+Define threat list
+    - bruteforce
+    - malware
+    - malvertising
+    - spam
+    - phishing
+    - anonymization
 
 Create channels per feed
     - add limit per day 
     - add apikey
     - threat_ratio
-    - trust rating/confidence level
+    - trust rating/confidence level (added in arbor feeds)
     - add validity period
 
 add item field
