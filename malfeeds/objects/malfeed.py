@@ -32,9 +32,12 @@ class MalFeed(object):
         self.uptodate = 0
         self.enabled = int(malfeedconfig.get('enabled', 0))
 
+        extra_list = ['comment']
+        self._engine_extra = dict((k, malfeedconfig[k]) for k in extra_list if k in malfeedconfig.keys())
+
         self._entries = []
 
-        if None in [self.name, self.engine_name, self.feedurl]:
+        if None in [self.name, self.engine_name, self.feedurl, self.type]:
             raise Exception("Error: failed to instanciate MalFeed class. "
                             "Verify required parameters in .ini file")
 
@@ -79,7 +82,7 @@ class MalFeed(object):
         classname, classproxy = engine_classes.pop()
         if inspect.getmodule(classproxy).__name__.find(engine_path) == 0:
             try:
-                engineobj = classproxy(self.feedurl, self.type)
+                engineobj = classproxy(self.feedurl, self.type, **self._engine_extra)
             except Exception as error:
                 raise Exception("Cannot create engine, unexpected engine name: {0}".format(error))
         return engineobj

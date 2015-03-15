@@ -6,12 +6,15 @@ import re
 
 
 class MalLinesFeed(object):
-    def __init__(self, feedurl, feedtype):
+    def __init__(self, feedurl, feedtype, **kwargs):
         self._feed_url = feedurl
         self._feed_entry_type = feedtype
         self._feed_header = {}
         self._feed_entries = []
         self._http_headers_time = "%a, %d %b %Y %H:%M:%S GMT"
+        self._commentchar = '#'
+        if 'comment' in kwargs:
+            self._commentchar = kwargs['comment']
 
     def update(self):
         if self._feed_url is not None:
@@ -54,7 +57,7 @@ class MalLinesFeed(object):
             _updtime = time.localtime()
 
         for feeditem in self._feed_stream.iter_lines():
-            if re.search("^(\s*#.*|\s*$)", feeditem) is not None:
+            if re.compile("^\s*{0}.*$".format(self._commentchar)).search(feeditem) is not None:
                 continue
             _item = {
                 'domain': '',
@@ -65,14 +68,14 @@ class MalLinesFeed(object):
                 'ip': '',
                 'url': ''
             }
-
-            if self._feed_entry_type is not None:
-                umatch = re.search("^\s*([^\s*]*)\s*$", feeditem)
-                if umatch is None or umatch.group(1) in known_garbage_list:
+            m = re.compile("^\s*([^;\s]*)\s*.*$").search(feeditem)
+            if self._feed_entry_type is not None and m is not None:
+                itemvalue = m.group(1)
+                if itemvalue in known_garbage_list:
                     continue
                 else:
-                    _item.update({self._feed_entry_type: umatch.group(1)})
+                    _item.update({self._feed_entry_type: itemvalue})
             else:
-                print("warning: no feed type specified. Ignoring entries")
+                raise Exception("warning: no feed type specified. Ignoring entries")
             self._feed_entries.append(_item)
         return rval
