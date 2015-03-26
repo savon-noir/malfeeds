@@ -38,12 +38,22 @@ def check_file(item):
 
     return filepath
 
-
-def get_item_type(item, default='ip'):
-    itype = default
+def get_item_type(item):
+    itype = 'ip'
     if check_ip(item) is not None:
         itype = 'ip'
     elif check_subnet(item) is not None:
         itype = 'domain'
     return itype
 
+def get_clean_item(item, itype='ip'):
+    rval = ''
+    if itype == 'ip':
+        rval = check_ip(item)
+    elif itype == 'subnet':
+        rval = check_subnet(item)
+    elif itype == 'url':
+        rval = check_url(item)
+    else:
+        rval = item
+    return rval
