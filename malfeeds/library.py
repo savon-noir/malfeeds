@@ -19,7 +19,7 @@ def check_subnet(item):
 
 def check_url(item):
     url = None
-    m =  re.compile('^(http(?:s)?:\/\/.*$)').search(item)
+    m =  re.compile('^(http(?:s)?:\/\/.*$|^[^:\/\.\s]{1,}\.[^:\/\.\s]*[^:\s]*)').search(item)
     if m is not None:
         url = m.group(1)
     return url

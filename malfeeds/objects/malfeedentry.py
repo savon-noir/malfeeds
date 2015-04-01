@@ -35,6 +35,7 @@ class MalFeedEntry(object):
             'country': "Country: (\w*)",
             'ip': "IP [aA]ddress: (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})",
             'url': "(?:Host|URL): ([^\s,]*)",
+            'alturl': "IP [aA]ddress: ([^\s,;]*)",
             'md5': "MD5.*: (\w*)"
         }
 
@@ -44,10 +45,10 @@ class MalFeedEntry(object):
                 extattr_dict.update({mkey: _matched.group(1)})
 
         if 'url' not in extattr_dict and 'ip' in extattr_dict:
-            extattr_dict['url'] = "http://{0}/".format(extattr_dict['ip'])
+            extattr_dict['url'] = "http://{0}".format(extattr_dict['ip'])
 
         if 'url' in extattr_dict and 'ip' in extattr_dict and extattr_dict['url'] == "-":
-            extattr_dict['url'] = "http://{0}/".format(extattr_dict['ip'])
+            extattr_dict['url'] = "http://{0}".format(extattr_dict['alturl'])
 
         return extattr_dict
 
