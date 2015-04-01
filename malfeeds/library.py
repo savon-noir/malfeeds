@@ -11,7 +11,7 @@ def check_ip(item):
 
 def check_subnet(item):
     subnet = None
-    regres = re.compile('\s*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\/[0-9]{1,2})*\s').search(item)
+    regres = re.compile('\s*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\/[0-9]{1,2})\s*').search(item)
     if regres is not None:
         subnet = regres.group(1)
     return subnet
@@ -40,10 +40,12 @@ def check_file(item):
 
 def get_item_type(item):
     itype = 'ip'
-    if check_ip(item) is not None:
+    if check_subnet(item) is not None:
+        itype = 'subnet'
+    elif check_ip(item) is not None:
         itype = 'ip'
-    elif check_subnet(item) is not None:
-        itype = 'domain'
+    elif check_url(item) is not None:
+        itype = 'url'
     return itype
 
 def get_clean_item(item, itype='ip'):

@@ -4,7 +4,6 @@ import re
 from idstools.rule import parse_fileobj
 from malfeeds.library import get_item_type
 from malfeeds.engines import MalFeedEngine
-from malfeeds.library import get_clean_item
 
 
 def extract_itemslist(rawdata):
@@ -53,7 +52,6 @@ class MalSnortFeed(MalFeedEngine):
                 _item = self._struct_entry.copy()
                 itype = get_item_type(feeditem)
                 _item.update({'type': itype, itype: feeditem})
-          #      _item[self._feed_entry_type] = feeditem
                 _item['last_update'] = self._feed_header['last_update']
                 _item['description'] = rule['msg']
                 self._feed_entries.append(_item)
