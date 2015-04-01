@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-import requests
-import time
 import re
 from idstools.rule import parse_fileobj
+from malfeeds.library import get_item_type
+from malfeeds.engines import MalFeedEngine
 
 
 def extract_itemslist(rawdata):
@@ -33,100 +33,26 @@ def extract_itemslist(rawdata):
         ruleitems = filter(lambda x: x not in junk, ruleitems)
     return ruleitems
 
-def check_ip(item):
-    ip = None
-    regres = re.compile('\s*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s*').search(item)
-    if regres is not None:
-        ip = regres.group(1)
-    return ip
 
+class MalSnortFeed(MalFeedEngine):
+    def __init__(self, feedurl, feedtype, **kwargs):
+        super(MalSnortFeed, self).__init__(feedurl, feedtype)
 
-def check_subnet(item):
-    subnet = None
-    regres = re.compile('\s*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\/[0-9]{1,2})*\s').search(item)
-    if regres is not None:
-        subnet = regres.group(1)
-    return subnet
-
-def get_item_type(item, default='ip'):
-    itype = default
-    if check_ip(item) is not None:
-        itype = 'ip'
-    elif check_subnet(item) is not None:
-        itype = 'domain'
-    return itype
-
-
-class MalSnortFeed(object):
-    def __init__(self, feedurl, feedtype):
-        self._feed_url = feedurl
-        self._feed_entry_type = feedtype
-        self._feed_header = {}
-        self._feed_entries = []
-        self._http_headers_time = "%a, %d %b %Y %H:%M:%S GMT"
-
-    def update(self):
-        if self._feed_url is not None:
-            self._feed_stream = requests.get(self._feed_url, stream=True, timeout=120)
-            self._update_header()
-            self._update_entries()
-
-    @property
-    def feed_header(self):
-        return self._feed_header
-
-    @property
-    def feed_entries(self):
-        return self._feed_entries
-
-    def _update_header(self):
-        rval = True
-        _dfeeder = {
-            'create_date': time.localtime(),
-            'last_update': None,
-            'last_status': self._feed_stream.status_code
-        }
-
-        if 'last-modified' in self._feed_stream.headers:
-            _updtime = time.strptime(self._feed_stream.headers['last-modified'], self._http_headers_time)
-            _dfeeder.update({'last_update': _updtime})
-        else:
-            _dfeeder.update({'last_update': time.localtime()})
-
-        self._feed_header.update(_dfeeder)
-        return rval
+    def _stream_iterator(self):
+        return self._stream_iterator_http()
 
     def _update_entries(self):
         rval = True
-        if 'last-modified' in self._feed_stream.headers:
-            _updtime = time.strptime(self._feed_stream.headers['last-modified'],
-                                     self._http_headers_time)
-        else:
-            _updtime = time.localtime()
-
         ruleslist = parse_fileobj(self._feed_stream.raw)
         for rule in ruleslist:
             rawdata = rule['raw']
             itemslist = extract_itemslist(rawdata)
 
             for feeditem in itemslist:
-                _item = {
-                    'last_update': _updtime,
-                    'description': rule['msg'],
-                    'type': '',
-                    'url': '',
-                    'domain': '',
-                    'ip': '',
-                    'subnet': '',
-                    'email': '',
-                    'asn': '',
-                    'country': '',
-                    'coordinates': '',
-                    'md5': '',
-                    'sha1': ''
-                }
+                _item = self._struct_entry.copy()
                 itype = get_item_type(feeditem)
                 _item.update({'type': itype, itype: feeditem})
-
+                _item['last_update'] = self._feed_header['last_update']
+                _item['description'] = rule['msg']
                 self._feed_entries.append(_item)
         return rval

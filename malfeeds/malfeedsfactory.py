@@ -6,6 +6,9 @@ import glob
 import os
 import sys
 
+# dev mode baby :p
+from pprint import pprint
+
 
 class MalFeedsFactory(object):
     def __init__(self, confdir=None, enabled_feeds=False):
@@ -53,17 +56,21 @@ class MalFeedsFactory(object):
 
 
 def main():
+    # testing, yo!
     feedsfactory = MalFeedsFactory()
     mfcollection = feedsfactory.create_collection()
     for malfeed in mfcollection.list():
         if malfeed.enabled:
-            print malfeed.name
             malfeed.update()
+            pprint(malfeed.name)
+            pprint(malfeed.header())
+            print "_________________________"
 #        manipulate the objects (not like below)
 #        print malfeed.header()
             for mentry in malfeed.entries():
-                print mentry
-            print "---------------------"
+                pprint(mentry)
+                print "---------------------"
+            print "========================"
 
 
 if __name__ == "__main__":
