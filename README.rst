@@ -17,14 +17,13 @@ The purpose of the engines is to enable developpers not to worry anymore on how 
 Currently, MalFeeds supports the following engine types:
 
 - HTTP lines feed (engine name: mallinesfeed)
-- RSS feed (engine name: rssmalfeed)
-- Specific feeds (e.g engine name: alienvault)
+- RSS feed (engine name: malrssfeed)
+- CSV feed (engine name: malcsvfeed)
+- TCP Wrappers host.deny file (engine name: maltcpdfeed)
+- Snort-file feed (engine name: malsnortfeed)
 
 The following are in the scope of developement line:
-
-- CSV feed (to replace alienvault specific feed)
-- Local lines feed
-- Snort-file feed
+- Local files data streaming
 - HPFeeds connector to integrate with honeypots data
 - Multi-line feed
 

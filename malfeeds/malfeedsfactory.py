@@ -56,7 +56,6 @@ class MalFeedsFactory(object):
 
 
 def main():
-    # testing, yo!
     feedsfactory = MalFeedsFactory()
     mfcollection = feedsfactory.create_collection()
     for malfeed in mfcollection.list():

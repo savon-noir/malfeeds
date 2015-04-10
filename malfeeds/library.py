@@ -1,6 +1,16 @@
 import re
 
 
+def valid_type(strtype):
+    tlist = ['ip',
+             'subnet',
+             'domain',
+             'url',
+             'email',
+             'dummy'
+    ]
+    return strtype in tlist
+
 def check_ip(item):
     ip = None
     regres = re.compile('\s*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s*').search(item)

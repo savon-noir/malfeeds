@@ -73,8 +73,8 @@ class MalFeedEngine(object):
             self._update_header_http()
         elif self.iterator_type == "rss":
             self._update_header_rss()
-#        elif self.iterator_type == "file":
-#            self._update_header_file()
+   #     elif self.iterator_type == "file":
+    #        self._update_header_file()
         else:
             raise Exception("Unknown stream type configured. Implement specific _update_header method in engine")
 
