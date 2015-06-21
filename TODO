@@ -22,6 +22,7 @@ Add support for following feeds
         http://www.autoshun.org/files/shunlist.csv
         http://www.stopforumspam.com/downloads/
         https://www.dshield.org/feeds/topips.txt
+        http://osint.bambenekconsulting.com/feeds/dga-fled.txt
 
     xml
         http://support.clean-mx.de/clean-mx/xmlviruses.php?

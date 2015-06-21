@@ -14,8 +14,7 @@ class MalLinesFeed(MalFeedEngine):
     def _stream_iterator(self):
         return self._stream_iterator_http()
 
-    def _update_entries(self):
-        rval = True
+    def _iter_entry(self):
         known_garbage_list = ["Site", "[Adblock]", "<pre>"]
 
         for feeditem in self._feed_stream.iter_lines():
@@ -27,10 +26,9 @@ class MalLinesFeed(MalFeedEngine):
                 if itemvalue is None or itemvalue in known_garbage_list or not len(itemvalue):
                     continue
                 else:
-                    _item = self._struct_entry.copy()
+                    _item = self._struct_entry
                     _item[self._feed_entry_type] = itemvalue
                     _item['last_update'] = self._feed_header['last_update']
-                    self._feed_entries.append(_item)
+                    yield _item
             else:
                 raise Exception("warning: no feed type specified. Ignoring entries")
-        return rval

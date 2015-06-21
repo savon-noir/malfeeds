@@ -30,7 +30,7 @@ The following are in the scope of developement line:
 MalFeeds Objects
 ----------------
 
-MalFeeds includes different objects, provided with an API which enable the developper to correlate the collected information, store it or export it.
+MalFeeds includes different objects, provided with an API which enable the developper to correlate the collected information, store it or export it. We could think of Malfeeds objects as dressed-up data entries extracted by the appropriate malfeed engine.
 
 Currently, MalFeeds is provided with the following object types:
 

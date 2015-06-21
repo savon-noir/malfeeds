@@ -10,7 +10,6 @@ class MalFeedEngine(object):
         self._feed_url = feeduri
         self._feed_entry_type = feedtype
         self._feed_header = {}
-        self._feed_entries = []
         self._feed_stream = None
 
         self.timeout = 10
@@ -26,7 +25,9 @@ class MalFeedEngine(object):
             'last_status': 'READY',  # READY, OK, FAILED
         }
 
-        self._struct_entry = {
+    @property
+    def _struct_entry(self):
+        return {
             'create_date': time.localtime(),
             'last_update': '',
             'description': '',
@@ -47,7 +48,6 @@ class MalFeedEngine(object):
         if self._feed_url is not None:
             self._feed_stream = self._stream_iterator()
             self._update_header()
-            self._update_entries()
 
     @property
     def feed_header(self):
@@ -55,7 +55,7 @@ class MalFeedEngine(object):
 
     @property
     def feed_entries(self):
-        return self._feed_entries
+        return self._iter_entry()
 
     def _stream_iterator(self):
         raise NotImplementedError("Engine must implement stream iterator method")
@@ -133,6 +133,3 @@ class MalFeedEngine(object):
 
         self._feed_header.update(_dfeeder)
         return rval
-
-    def _update_entries(self):
-        raise NotImplementedError("Engine must implement stream iterator method")

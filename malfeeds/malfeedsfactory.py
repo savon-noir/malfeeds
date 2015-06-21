@@ -62,11 +62,11 @@ def main():
         if malfeed.enabled:
             malfeed.update()
             pprint(malfeed.name)
-            pprint(malfeed.header())
+            pprint(malfeed.feed_header)
             print "_________________________"
 #        manipulate the objects (not like below)
 #        print malfeed.header()
-            for mentry in malfeed.entries():
+            for mentry in malfeed.feed_entries:
                 pprint(mentry)
                 print "---------------------"
             print "========================"

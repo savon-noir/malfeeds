@@ -41,18 +41,16 @@ class MalSnortFeed(MalFeedEngine):
     def _stream_iterator(self):
         return self._stream_iterator_http()
 
-    def _update_entries(self):
-        rval = True
+    def _iter_entry(self):
         ruleslist = parse_fileobj(self._feed_stream.raw)
         for rule in ruleslist:
             rawdata = rule['raw']
             itemslist = extract_itemslist(rawdata)
 
             for feeditem in itemslist:
-                _item = self._struct_entry.copy()
+                _item = self._struct_entry
                 itype = get_item_type(feeditem)
                 _item.update({'type': itype, itype: feeditem})
                 _item['last_update'] = self._feed_header['last_update']
                 _item['description'] = rule['msg']
-                self._feed_entries.append(_item)
-        return rval
+                yield _item

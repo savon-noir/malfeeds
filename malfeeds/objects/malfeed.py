@@ -3,6 +3,7 @@
 import hashlib
 import inspect
 import sys
+import warnings
 from malfeeds.objects.malfeedentry import MalFeedEntry
 
 
@@ -42,11 +43,9 @@ class MalFeed(object):
             raise Exception("Error: failed to instanciate MalFeed class. "
                             "Verify required parameters in .ini file")
 
-
     def update(self):
         self._engine.update()
         self._update_header()
-        self._update_entries()
 
     def _update_header(self):
         fh = self._engine.feed_header
@@ -55,22 +54,20 @@ class MalFeed(object):
             if oattr is None or len(oattr) == 0:
                 setattr(self, hk, fh[hk])
 
-    def _update_entries(self):
-        self._entries = []
+    @property
+    def feed_entries(self):
         for eentry in self._engine.feed_entries:
             eentry.update({'tags': self.tags,
                            'feedurl': self.feedurl,
                            'type': self.type})
-            self._entries.append(MalFeedEntry(eentry, self.extended))
+            yield MalFeedEntry(eentry, self.extended)
 
-    def header(self):
+    @property
+    def feed_header(self):
         rh = dict(self.__dict__)
         del rh['_entries']
         del rh['_engine']
         return rh
-
-    def entries(self):
-        return self._entries
 
     def _load_engine(self, engine_name):
         engineobj = None

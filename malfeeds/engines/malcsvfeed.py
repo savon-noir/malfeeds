@@ -3,6 +3,7 @@
 from malfeeds.engines import MalFeedEngine
 import re
 
+
 class MalCSVFeed(MalFeedEngine):
     def __init__(self, feedurl, feedtype, **kwargs):
         super(MalCSVFeed, self).__init__(feedurl, feedtype)
@@ -24,9 +25,7 @@ class MalCSVFeed(MalFeedEngine):
     def _stream_iterator(self):
         return self._stream_iterator_http()
 
-    def _update_entries(self):
-        rval = True
-
+    def _iter_entry(self):
         for feeditem in self._feed_stream.iter_lines():
             if re.compile("^\s*{0}.*$".format(self._commentchar)).search(feeditem) is not None:
                 continue
@@ -39,8 +38,7 @@ class MalCSVFeed(MalFeedEngine):
                     _csvparsed = re.search(self._rule_pattern, itemvalue)
 
             if _csvparsed is not None:
-                _item = self._struct_entry.copy()
+                _item = self._struct_entry
                 _item.update(_csvparsed.groupdict())
                 _item['last_update'] = self._feed_header['last_update']
-                self._feed_entries.append(_item)
-        return rval
+                yield _item
