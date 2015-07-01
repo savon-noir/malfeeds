@@ -72,8 +72,10 @@ Dependencies
 
 Following packages need to be installed:
 
+- requests
 - feedparser
 - idstools
+- python-geoip-geolite2
 
 How to run it
 -------------

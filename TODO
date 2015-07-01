@@ -1,4 +1,3 @@
-
 optimize:
     - engine mallinesfeed: manage lines with inline comments (improve regexp)
     - add entry fields: type (ip, domain, ...), align with snort, add description
@@ -18,12 +17,12 @@ Add support for following feeds
         http://openphish.com/feed.txt
         http://www.spamhaus.org/drop/edrop.txt <-- optimize comment type
         http://www.spamhaus.org/drop/drop.lasso
+        bogons: http://www.team-cymru.org/bogon-reference.html
     csv
         http://www.autoshun.org/files/shunlist.csv
         http://www.stopforumspam.com/downloads/
         https://www.dshield.org/feeds/topips.txt
-        http://osint.bambenekconsulting.com/feeds/dga-fled.txt
-
+        http://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.xhtml
     xml
         http://support.clean-mx.de/clean-mx/xmlviruses.php?
         http://malwaredb.malekal.com/export.php?type=url

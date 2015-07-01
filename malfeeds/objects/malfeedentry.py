@@ -2,7 +2,7 @@
 
 import re
 import hashlib
-
+from geoip import geolite2
 
 class MalFeedEntry(object):
     def __init__(self, malitemdict, extended=0):
@@ -13,10 +13,13 @@ class MalFeedEntry(object):
         self.type = None
         self.url = None
         self.ip = None
+        self.ip
         self.domain = None
         self.asn = None
         self.country = None
         self.coordinates = None
+        self.timezone = None
+        self.city = None
         self.tags = None
         self.sha1 = None
         self.md5 = None
@@ -51,6 +54,21 @@ class MalFeedEntry(object):
             extattr_dict['url'] = "http://{0}".format(extattr_dict['alturl'])
 
         return extattr_dict
+
+    def resolve_geoip(self):
+        match = None
+        if self.ip is not None:
+            try:
+                match = geolite2.lookup(self.ip)
+            except ValueError as e:
+                print("error: while trying to lookup ip {0} ({1})".format(self.ip, e))
+
+            if match is None:
+                print("Failed to match IP {0} with geolocalization database".format(self.ip))
+            else:
+                self.country = match.country
+                self.coordinates = list(match.location) if match.location is not None else None
+                self.timezone = match.timezone
 
     def __repr__(self):
         return str(self.__dict__)
