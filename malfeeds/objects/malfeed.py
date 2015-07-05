@@ -19,6 +19,8 @@ class MalFeed(object):
         self.feedurl = malfeedconfig.get('feedurl', None)
         self.tags = malfeedconfig.get('tags', '').split(',')
         self.type = malfeedconfig.get('type', None)
+        self.threat = malfeedconfig.get('threat', 'unknown')
+        self.confidence = malfeedconfig.get('confidence', 0)
         self.use_dns = int(malfeedconfig.get('use_dns', 0))
         self.use_geoip = int(malfeedconfig.get('use_geoip', 0))
         self.extended = int(malfeedconfig.get('extended', 0))

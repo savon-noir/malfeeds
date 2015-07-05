@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import requests
+from requests.exceptions import ConnectionError
 import feedparser
 import time
+import socket
 
 
 class MalFeedEngine(object):
@@ -12,7 +14,7 @@ class MalFeedEngine(object):
         self._feed_header = {}
         self._feed_stream = None
 
-        self.timeout = 10
+        self.timeout = 4
         self.iterator_type = None
 
         self._feed_header = {
@@ -62,11 +64,20 @@ class MalFeedEngine(object):
 
     def _stream_iterator_http(self):
         self.iterator_type = 'http'
-        return requests.get(self._feed_url, stream=True, timeout=self.timeout)
+        rit = None
+        try:
+            rit = requests.get(self._feed_url, stream=True, timeout=self.timeout)
+        except ConnectionError:
+            raise Exception("Failed to connect to url: {0}".format(self._feed_url)) 
+        return rit
 
     def _stream_iterator_rss(self):
+        socket.setdefaulttimeout(self.timeout)
         self.iterator_type = 'rss'
-        return feedparser.parse(self._feed_url)
+        rit = feedparser.parse(self._feed_url)
+        if 'bozo_exception' in rit:
+            raise Exception("Failed to connect to rss feed: {0}".format(self._feed_url))
+        return rit
 
     def _update_header(self):
         if self.iterator_type == "http":

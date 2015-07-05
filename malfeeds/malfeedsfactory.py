@@ -50,7 +50,11 @@ class MalFeedsFactory(object):
 
         for section in self.feedsconfig.sections():
             mfsection = dict(self.feedsconfig.items(section))
-            mfcollection.add(MalFeed(mfsection))
+            try:
+                _mf = MalFeed(mfsection)
+                mfcollection.add(_mf)
+            except Exception, e:
+                print("error while creating malfeed: {0}".format(str(e)))
 
         return mfcollection
 
