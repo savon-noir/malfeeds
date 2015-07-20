@@ -4,11 +4,8 @@ from malfeeds.engines import MalFeedEngine
 
 
 class MalRSSFeed(MalFeedEngine):
-    def __init__(self, feedurl, feedtype, **kwargs):
-        super(MalRSSFeed, self).__init__(feedurl, feedtype)
-
-    def _stream_iterator(self):
-        return self._stream_iterator_rss()
+    def __init__(self, feedurl, feedtype, input_type, **kwargs):
+        super(MalRSSFeed, self).__init__(feedurl, feedtype, input_type)
 
     def _iter_entry(self):
         for feeditem in self._feed_stream.entries:

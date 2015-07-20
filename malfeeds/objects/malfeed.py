@@ -3,7 +3,6 @@
 import hashlib
 import inspect
 import sys
-import warnings
 from malfeeds.objects.malfeedentry import MalFeedEntry
 
 
@@ -19,6 +18,7 @@ class MalFeed(object):
         self.feedurl = malfeedconfig.get('feedurl', None)
         self.tags = malfeedconfig.get('tags', '').split(',')
         self.type = malfeedconfig.get('type', None)
+        self.input_type = malfeedconfig.get('input_type', None)
         self.threat = malfeedconfig.get('threat', 'unknown')
         self.confidence = malfeedconfig.get('confidence', 0)
         self.use_dns = int(malfeedconfig.get('use_dns', 0))
@@ -84,7 +84,7 @@ class MalFeed(object):
                 break
         if inspect.getmodule(classproxy).__name__.find(engine_path) == 0:
             try:
-                engineobj = classproxy(self.feedurl, self.type, **self._engine_extra)
+                engineobj = classproxy(self.feedurl, self.type, self.input_type, **self._engine_extra)
             except Exception as error:
                 raise Exception("Cannot create engine, unexpected engine name: {0}".format(error))
         return engineobj
