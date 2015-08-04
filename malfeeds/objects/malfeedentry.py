@@ -13,7 +13,6 @@ class MalFeedEntry(object):
         self.type = None
         self.url = None
         self.ip = None
-        self.ip
         self.domain = None
         self.asn = None
         self.country = None
