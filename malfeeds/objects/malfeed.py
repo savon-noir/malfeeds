@@ -86,7 +86,7 @@ class MalFeed(object):
             try:
                 engineobj = classproxy(self.feedurl, self.type, self.input_type, **self._engine_extra)
             except Exception as error:
-                raise Exception("Cannot create engine, unexpected engine name: {0}".format(error))
+                raise Exception("Cannot create engine {0}, unexpected engine name: {1}".format(engine_name, error))
         return engineobj
 
     def __str__(self):

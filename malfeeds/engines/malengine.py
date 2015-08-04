@@ -68,7 +68,7 @@ class MalFeedEngine(object):
                 'rss': self._stream_iterator_rss,
                 'file': self._stream_iterator_file
         }
-        return sptr[self._input_type]
+        return sptr[self._input_type]()
 
     def _stream_iterator_http(self):
         self.iterator_type = 'http'
@@ -91,7 +91,7 @@ class MalFeedEngine(object):
         self.iterator_type = 'file'
         rit = None
         try:
-            rit = open(self._feed_url, 'r', encoding='utf-8')
+            rit = open(self._feed_url, 'r')
         except IOError:
             raise Exception("Failed to open file {0}".format(self._feed_url))
         return rit
