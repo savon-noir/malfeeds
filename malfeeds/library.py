@@ -13,7 +13,7 @@ def valid_type(strtype):
 
 def check_ip(item):
     ip = None
-    regres = re.compile('\s*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s*').search(item)
+    regres = re.compile('^\s*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s*').search(item)
     if regres is not None:
         ip = regres.group(1)
     return ip
@@ -21,7 +21,7 @@ def check_ip(item):
 
 def check_subnet(item):
     subnet = None
-    regres = re.compile('\s*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\/[0-9]{1,2})\s*').search(item)
+    regres = re.compile('^\s*([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\/[0-9]{1,2})\s*').search(item)
     if regres is not None:
         subnet = regres.group(1)
     return subnet
@@ -49,7 +49,7 @@ def check_file(item):
     return filepath
 
 def get_item_type(item):
-    itype = 'ip'
+    itype = None
     if check_subnet(item) is not None:
         itype = 'subnet'
     elif check_ip(item) is not None:

@@ -46,8 +46,11 @@ class MalFeed(object):
                             "Verify required parameters in .ini file")
 
     def update(self):
-        self._engine.update()
-        self._update_header()
+        rval = False
+        if self._engine.update():
+            self._update_header()
+            rval = True
+        return rval
 
     def _update_header(self):
         fh = self._engine.feed_header

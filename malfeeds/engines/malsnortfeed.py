@@ -47,6 +47,8 @@ class MalSnortFeed(MalFeedEngine):
             for feeditem in itemslist:
                 _item = self._struct_entry
                 itype = get_item_type(feeditem)
+                if itype is None:
+                    itype = self._feed_entry_type
                 _item.update({'type': itype, itype: feeditem})
                 _item['last_update'] = self._feed_header['last_update']
                 _item['description'] = rule['msg']

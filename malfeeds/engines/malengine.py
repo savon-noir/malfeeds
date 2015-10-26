@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import requests
+import logging
 from requests.exceptions import ConnectionError
 from pwd import getpwuid
 import feedparser
@@ -51,9 +52,17 @@ class MalFeedEngine(object):
         }
 
     def update(self):
+        rval = False
         if self._feed_url is not None:
             self._feed_stream = self._stream_iterator()
-            self._update_header()
+            if self._feed_stream is not None:
+                logging.debug('Succesful feed update from {0}'.format(self._feed_url))
+                rval = self._update_header()
+                if rval is False:
+                    logging.warning('Header update failed for URL {0}'.format(self._feed_url))
+            else:
+                logging.error('Error while trying to update from {0}'.format(self._feed_url))
+        return rval
 
     @property
     def feed_header(self):
@@ -75,8 +84,10 @@ class MalFeedEngine(object):
         rit = None
         try:
             rit = requests.get(self._feed_url, stream=True, timeout=self.timeout)
-        except ConnectionError:
+        except:
             raise Exception("Failed to connect to url: {0}".format(self._feed_url)) 
+            logging.error("Failed to connect to url: {0}".format(self._feed_url)) 
+            rit = None
         return rit
 
     def _stream_iterator_rss(self):
@@ -85,6 +96,8 @@ class MalFeedEngine(object):
         rit = feedparser.parse(self._feed_url)
         if 'bozo_exception' in rit:
             raise Exception("Failed to connect to rss feed: {0}".format(self._feed_url))
+            logging.error("Failed to connect to rss feed: {0}".format(self._feed_url))
+            rit = None
         return rit
 
     def _stream_iterator_file(self):
@@ -94,17 +107,22 @@ class MalFeedEngine(object):
             rit = open(self._feed_url, 'r')
         except IOError:
             raise Exception("Failed to open file {0}".format(self._feed_url))
+            logging.error("Failed to open file {0}".format(self._feed_url))
+            rit = None
         return rit
 
     def _update_header(self):
+        rval = False
         if self.iterator_type == "http":
-            self._update_header_http()
+            rval = self._update_header_http()
         elif self.iterator_type == "rss":
-            self._update_header_rss()
+            rval = self._update_header_rss()
         elif self.iterator_type == "file":
-            self._update_header_file()
+            rval = self._update_header_file()
         else:
             raise Exception("Unknown stream type configured. Implement specific _update_header method in engine")
+            logging.error("Unknown stream type configured. Implement specific _update_header method in engine")
+        return rval
 
     def _update_header_http(self):
         http_headers_time = "%a, %d %b %Y %H:%M:%S GMT"
@@ -117,14 +135,17 @@ class MalFeedEngine(object):
                 lstatus = "OK"
             elif sc >= 500:
                 lstatus = "FAILED"
+                logging.error('Failed to get RSS stream from {0}: http code: {1}'.format(self._feed_url, sc))
             else:
                 rval = False
+                logging.error('Failed to get RSS stream from {0}, unknown http error {1}'.format(self._feed_url, sc))
 
             if 'last-modified' in self._feed_stream.headers:
                 lmodified = time.strptime(self._feed_stream.headers['last-modified'], http_headers_time)
             else:
-                rval = False
+                lmodified = time.localtime()
         else:
+            logging.error('No http feed stream provided for {0}'.format(self._feed_url))
             rval = False
 
         _dfeeder = {
@@ -132,7 +153,6 @@ class MalFeedEngine(object):
             'last_update': lmodified,
             'last_status': lstatus
         }
-
         self._feed_header.update(_dfeeder)
         return rval
 
@@ -144,6 +164,7 @@ class MalFeedEngine(object):
         if sc >= 200 and sc < 400:
             lstatus = "OK"
         elif sc >= 500:
+            logging.error('Failed to get RSS stream from {0}'.format(self._feed_url))
             lstatus = "FAILED"
 
         _dfeeder = {
@@ -157,6 +178,7 @@ class MalFeedEngine(object):
             'last_status': lstatus
         }
         if _dfeeder['title'] is None:
+            logging.error('No title defined for feed with file path {0}'.format(self._feed_url))
             rval = False
 
         self._feed_header.update(_dfeeder)
@@ -168,9 +190,11 @@ class MalFeedEngine(object):
         try:
             fstat = os.stat(self._feed_url)
         except OSError:
+            logging.error('Failed to get file meta data from {0}'.format(self._feed_url))
             lstatus = "FAILED"
 
         if self._feed_stream is None:
+            logging.error('Failed to get file stream from {0}'.format(self._feed_url))
             lstatus = "FAILED"
 
         _owner = getpwuid(fstat.st_uid).pw_name
@@ -184,6 +208,7 @@ class MalFeedEngine(object):
             'last_status': lstatus
         }
         if _dfeeder['title'] is None:
+            logging.error('No title defined for feed with file path {0}'.format(self._feed_url))
             rval = False
 
         self._feed_header.update(_dfeeder)

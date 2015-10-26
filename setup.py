@@ -7,7 +7,7 @@ with open("README.rst") as rfile:
 
 setup(
     name='malfeeds',
-    version='0.2',
+    version='0.3',
     author='Ronald Bister',
     author_email='mini.pelle@gmail.com',
     packages=['malfeeds', 'malfeeds.engines', 'malfeeds.objects'],

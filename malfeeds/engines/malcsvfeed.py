@@ -38,4 +38,5 @@ class MalCSVFeed(MalFeedEngine):
                 _item = self._struct_entry
                 _item.update(_csvparsed.groupdict())
                 _item['last_update'] = self._feed_header['last_update']
+                _item['type'] = self._feed_entry_type
                 yield _item
