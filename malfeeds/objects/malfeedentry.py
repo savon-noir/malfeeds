@@ -22,6 +22,7 @@ class MalFeedEntry(object):
         self.tags = None
         self.sha1 = None
         self.md5 = None
+        self.name = ''
 
         self.__dict__.update(malitemdict)
         if extended:

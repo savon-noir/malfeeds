@@ -16,7 +16,6 @@ class TestAV(unittest.TestCase):
         print self.mfcollection
 
     def test_av_base(self):
-        print "lol"
         print self.mfcollection.list()
         for malfeed in self.mfcollection.list():
             if malfeed.enabled:

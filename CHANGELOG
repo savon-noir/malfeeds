@@ -1,5 +1,9 @@
+30/10/2015, v0.3.1:
+- added tor exit nodes feed engine
+- added cloud flare feed
 26/10/2015, v0.3:
 - corrected a few bugs
 - added logging
 - entry type is now dynamic
+
 
