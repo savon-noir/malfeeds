@@ -35,7 +35,7 @@ class MalFeed(object):
         self.uptodate = 0
         self.enabled = int(malfeedconfig.get('enabled', 0))
 
-        extra_list = ['comment', 'pattern', 'delimiter']
+        extra_list = ['comment', 'pattern', 'delimiter', 'http_proxy', 'https_proxy']
         self._engine_extra = dict((k, malfeedconfig[k]) for k in extra_list if k in malfeedconfig.keys())
 
         self._entries = []

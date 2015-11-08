@@ -6,7 +6,7 @@ import re
 
 class MalCSVFeed(MalFeedEngine):
     def __init__(self, feedurl, feedtype, input_type, **kwargs):
-        super(MalCSVFeed, self).__init__(feedurl, feedtype, input_type)
+        super(MalCSVFeed, self).__init__(feedurl, feedtype, input_type, **kwargs)
         self._commentchar = '#'
         self._delimiterchar = ';'
         self._csvpattern = '<{0}>'.format(feedtype)

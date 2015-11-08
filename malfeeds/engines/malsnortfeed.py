@@ -36,7 +36,7 @@ def extract_itemslist(rawdata):
 
 class MalSnortFeed(MalFeedEngine):
     def __init__(self, feedurl, feedtype, input_type, **kwargs):
-        super(MalSnortFeed, self).__init__(feedurl, feedtype, input_type)
+        super(MalSnortFeed, self).__init__(feedurl, feedtype, input_type, **kwargs)
 
     def _iter_entry(self):
         ruleslist = parse_fileobj(self._feed_stream.raw)

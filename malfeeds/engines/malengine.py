@@ -11,15 +11,26 @@ import os
 
 
 class MalFeedEngine(object):
-    def __init__(self, feeduri, feedtype, input_type):
+    def __init__(self, feeduri, feedtype, input_type, **kwargs):
         self._feed_url = feeduri
         self._feed_entry_type = feedtype
         self._feed_header = {}
         self._feed_stream = None
+        self._proxies = None
 
-        self.timeout = 4
+        if kwargs is not None:
+            self._proxies = {}
+            if 'http_proxy' in kwargs:
+                self._proxies.update({'http': kwargs['http_proxy']})
+            if 'https_proxy' in kwargs:
+                self._proxies.update({'https': kwargs['https_proxy']})
+
+        if kwargs is not None and 'timeout' in kwargs:
+            self.timeout = kwargs['timeout']
+        else:
+            self.timeout = 4
+
         self.iterator_type = None
-
         self._input_type = input_type
 
         self._feed_header = {
@@ -83,7 +94,10 @@ class MalFeedEngine(object):
         self.iterator_type = 'http'
         rit = None
         try:
-            rit = requests.get(self._feed_url, stream=True, timeout=self.timeout)
+            if self._proxies is None:
+                rit = requests.get(self._feed_url, stream=True, timeout=self.timeout)
+            else:
+                rit = requests.get(self._feed_url, stream=True, timeout=self.timeout, proxies=self._proxies)
         except:
             raise Exception("Failed to connect to url: {0}".format(self._feed_url)) 
             logging.error("Failed to connect to url: {0}".format(self._feed_url)) 
@@ -93,7 +107,11 @@ class MalFeedEngine(object):
     def _stream_iterator_rss(self):
         socket.setdefaulttimeout(self.timeout)
         self.iterator_type = 'rss'
-        rit = feedparser.parse(self._feed_url)
+        if self._proxies is not None:
+            _proxy_handlers = urllib2.ProxyHandler(self._proxies)
+            rit = feedparser.parse(self._feed_url,  handlers = [_proxy_handlers])
+        else:
+            rit = feedparser.parse(self._feed_url)
         if 'bozo_exception' in rit:
             raise Exception("Failed to connect to rss feed: {0}".format(self._feed_url))
             logging.error("Failed to connect to rss feed: {0}".format(self._feed_url))

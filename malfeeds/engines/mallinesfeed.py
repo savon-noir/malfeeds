@@ -7,7 +7,7 @@ import re
 
 class MalLinesFeed(MalFeedEngine):
     def __init__(self, feedurl, feedtype, input_type, **kwargs):
-        super(MalLinesFeed, self).__init__(feedurl, feedtype, input_type)
+        super(MalLinesFeed, self).__init__(feedurl, feedtype, input_type, **kwargs)
         self._commentchar = '#'
         if 'comment' in kwargs:
             self._commentchar = kwargs['comment']
