@@ -22,10 +22,7 @@ class MalTcpdFeed(MalFeedEngine):
                 _itemvalue = regres.group(1)
             
             _item = self._struct_entry
-            _itype = get_item_type(_itemvalue)
-            if _itype is None:
-                _itype = self._feed_entry_type
-            _item[_itype] = _itemvalue
-            _item['type'] = _itype
+            _item[self._feed_entry_type] = _itemvalue
+            _item['type'] = self._feed_entry_type
             _item['last_update'] = self._feed_header['last_update']
             yield _item

@@ -8,6 +8,7 @@ import feedparser
 import time
 import socket
 import os
+import urllib2
 
 
 class MalFeedEngine(object):
@@ -107,7 +108,7 @@ class MalFeedEngine(object):
     def _stream_iterator_rss(self):
         socket.setdefaulttimeout(self.timeout)
         self.iterator_type = 'rss'
-        if self._proxies is not None:
+        if self._proxies is not None and len(self._proxies):
             _proxy_handlers = urllib2.ProxyHandler(self._proxies)
             rit = feedparser.parse(self._feed_url,  handlers = [_proxy_handlers])
         else:

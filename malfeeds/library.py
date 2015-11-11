@@ -34,6 +34,12 @@ def check_url(item):
         url = m.group(1)
     return url
 
+def check_domain(item):
+    domain = None
+    dm = re.compile('^\s*([A-Za-z0-9]{1,}\.[A-Za-z0-9]{1,}[A-Za-z0-9.]*)').search(item)
+    if dm is not None:
+        domain = dm.group(1)
+    return domain
 
 def check_file(item):
     filepath = None
@@ -56,6 +62,8 @@ def get_item_type(item):
         itype = 'ip'
     elif check_url(item) is not None:
         itype = 'url'
+    elif check_domain(item) is not None:
+        itype = 'domain'
     return itype
 
 def get_clean_item(item, itype='ip'):
