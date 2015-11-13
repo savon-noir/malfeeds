@@ -4,6 +4,7 @@ import re
 from idstools.rule import parse_fileobj
 from malfeeds.library import get_item_type
 from malfeeds.engines import MalFeedEngine
+from StringIO import StringIO
 
 
 def extract_itemslist(rawdata):
@@ -39,7 +40,8 @@ class MalSnortFeed(MalFeedEngine):
         super(MalSnortFeed, self).__init__(feedurl, feedtype, input_type, **kwargs)
 
     def _iter_entry(self):
-        ruleslist = parse_fileobj(self._feed_stream.raw)
+        fstream = StringIO(self._feed_stream.text)
+        ruleslist = parse_fileobj(fstream)
         for rule in ruleslist:
             rawdata = rule['raw']
             itemslist = extract_itemslist(rawdata)
